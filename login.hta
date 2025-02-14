@@ -28,7 +28,7 @@
     }
 
     function startTimer(duration) {
-        shell.Run("wscript.exe \"C:\\Users\\User\\Desktop\\timer.vbs\" " + duration, 0, false);
+        shell.Run("wscript.exe \".\\timer.vbs\" " + duration, 0, false);
     }
 
     window.onload = function() {
