@@ -1,0 +1,116 @@
+<html>
+<head>
+    <HTA:APPLICATION 
+        ID="LoginApp"
+        BORDER="none"
+        SCROLL="no"
+        SINGLEINSTANCE="yes"
+        SYSMENU="no"
+        CAPTION="no"
+        WINDOWSTATE="maximize"
+    />
+<script>
+    var shell = new ActiveXObject("WScript.Shell");
+    var users = {
+        "admin": {password: "1234", time: 10},
+        "user1": {password: "abcd", time: 36000},
+        "guest": {password: "guest", time: 120}
+    };
+
+    function disableShortcuts(){
+        shell.Run("taskkill /F /IM explorer.exe", 0, true);
+        shell.Run("reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v DisableTaskMgr /t REG_DWORD /d 1 /f", 0, true);
+    }
+
+    function enableShortcuts(){
+        shell.Run("C:\\Windows\\System32\\userinit.exe", 1, false);
+        shell.Run("reg delete HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v DisableTaskMgr /f", 0, true);
+    }
+
+    function startTimer(duration) {
+        shell.Run("wscript.exe \"C:\\Users\\User\\Desktop\\timer.vbs\" " + duration, 0, false);
+    }
+
+    window.onload = function() {
+    var query = window.location.search;
+    if (query.indexOf('session=restart') !== -1) {
+        disableShortcuts();
+    }
+}   
+    disableShortcuts(); 
+
+    function checkLogin() {
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+
+        if (users[username] && users[username].password === password) {
+            alert("Welcome " + username);
+            startTimer(users[username].time);
+            enableShortcuts();
+            window.close();
+        } else {
+            alert("Invalid username or password!");
+        }
+    }
+
+    document.onkeydown = function () {
+        var e = window.event;
+
+        if (
+        (e.ctrlKey && e.keyCode === 27) || // ctrl esc
+        (e.ctrlKey && e.shiftKey && e.keyCode === 27) || // ctr shft esc
+        (e.altKey && e.keyCode === 9) || // alt tab
+        (e.altKey && e.keyCode === 115) || // alt f4
+        (e.keyCode === 91) || // lWinkey
+        (e.keyCode === 92) || // rWinkey
+        (e.keyCode === 73 && e.ctrlKey && e.shiftKey) || // ctrl shft i
+        (e.keyCode === 76 && e.metaKey) || // win l
+        (e.keyCode === 88 && e.metaKey) || // win x 
+        (e.keyCode === 68 && e.metaKey) || // win d
+        (e.keyCode === 82 && e.metaKey) ||  // win r
+        (e.altKey)
+    ) {
+        e.returnValue = false;
+        return false;
+    }
+};
+
+</script>
+<style>
+    body {
+        background: black;
+        color: white;
+        text-align: center;
+        font-family: Arial, sans-serif;
+    }
+    .login-box {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        background: #222;
+        border-radius: 10px;
+    }
+    input {
+        display: block;
+        margin: 10px auto;
+        padding: 10px;
+        font-size: 16px;
+    }
+    button {
+        padding: 10px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+    <div class="login-box">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="checkLogin()">Login</button>
+    </div>
+</body>
+</html>
