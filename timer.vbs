@@ -8,7 +8,7 @@ Do
     timeRemaining = timeRemaining - 1
     If timeRemaining <= 0 Then
         WshShell.Popup "Time's up!", 5, "Notice", 4096
-        WshShell.Run "C:\\Users\\User\\Desktop\\launcher.bat ?session=restart"
+        WshShell.Run ".\launcher.bat ?session=restart"
         Exit Do
     End If
 Loop
